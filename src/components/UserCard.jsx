@@ -1,12 +1,13 @@
 import { Edit3, Trash2, Calendar, DollarSign, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import useFirebase from "../hooks/useFirebase";
+import Loading from "../components/Loading";
 
 export default function UserCard({ user, onEdit, onDelete }) {
   const [savings, setSavings] = useState(0);
 
   /* firebase hook */
-  const { getSavingsById } = useFirebase();
+  const { getSavingsById, isLoading } = useFirebase();
 
   /* helper function to convert DD/MM/YYYY to MM/DD/YYYY */
   const formatDate = (dateStr) => {
@@ -23,6 +24,8 @@ export default function UserCard({ user, onEdit, onDelete }) {
 
     fetchSavings();
   }, [getSavingsById, user.id]);
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

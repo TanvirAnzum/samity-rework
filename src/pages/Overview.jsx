@@ -119,7 +119,7 @@ const Overview = () => {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="p-4 pb-20 space-y-6">
+    <div className="pb-20 space-y-6">
       {/* --- Top Stats --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {stats.map((stat, idx) => (
