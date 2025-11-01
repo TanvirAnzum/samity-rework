@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import Modal from "../components/Modal";
-import { CirclePlus, EllipsisVertical, FoldHorizontal } from "lucide-react";
+import { CirclePlus, Filter, FilterX } from "lucide-react";
 import TransactionFilters from "../components/TransactionFilters";
 import useFirebase from "../hooks/useFirebase";
 import Loading from "../components/Loading";
@@ -28,6 +27,7 @@ const Transactions = () => {
   const [refresh, setRefresh] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [hideFiters, setHideFilters] = useState(true);
 
   /* firebase hook */
   const { fetchTransactions, isLoading } = useFirebase();
@@ -39,6 +39,11 @@ const Transactions = () => {
 
   const onApplyFilter = () => {
     setRefresh((prev) => !prev);
+    setHideFilters(true);
+  };
+
+  const toggleFilterVisibility = () => {
+    setHideFilters((prev) => !prev);
   };
 
   useEffect(() => {
@@ -76,25 +81,46 @@ const Transactions = () => {
     <div className="pb-20">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 w-full bg-white border border-gray-200 rounded-xl shadow-sm p-4">
         {/* Left Section: Adaptive Filter */}
-        <TransactionFilters
-          filterMode={filterMode}
-          setFilterMode={setFilterMode}
-          month={month}
-          setMonth={setMonth}
-          year={year}
-          setYear={setYear}
-          userFilter={userFilter}
-          setUserFilter={setUserFilter}
-        />
+        {!hideFiters && (
+          <TransactionFilters
+            filterMode={filterMode}
+            setFilterMode={setFilterMode}
+            month={month}
+            setMonth={setMonth}
+            year={year}
+            setYear={setYear}
+            userFilter={userFilter}
+            setUserFilter={setUserFilter}
+          />
+        )}
+
+        {hideFiters && (
+          <p className="text-green-900 font-semibold font-sm italic">
+            Filter:{" "}
+            {filterMode === "month"
+              ? `current month(${month}-${year})`
+              : `user(${userFilter ? userFilter : "not specified"})`}
+          </p>
+        )}
 
         {/* Right Section: Buttons */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
           {/* Apply Filter Button */}
+          {!hideFiters && (
+            <button
+              onClick={onApplyFilter}
+              className="flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-4 py-2 rounded-md transition-all duration-200 w-full sm:w-auto"
+            >
+              <span>Apply Filter</span>
+            </button>
+          )}
+
+          {/* Toggle Filter Visibility Button */}
           <button
-            onClick={onApplyFilter}
-            className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 rounded-md transition-all duration-200 w-full sm:w-auto"
+            onClick={toggleFilterVisibility}
+            className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-md transition-all duration-200 w-full sm:w-auto"
           >
-            <span>Apply Filter</span>
+            {hideFiters ? "Show" : "Hide"} filter options
           </button>
 
           {/* Add Transaction Button */}
